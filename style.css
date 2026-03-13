@@ -1,21 +1,22 @@
 /* --- CSS VARIABLES & TOKENS --- */
 :root {
-  /* Colors */
-  --color-primary: #8C6239; /* Coffee Brown */
-  --color-primary-dark: #6F4E2D;
-  --color-primary-light: #C29F7B;
-  --color-secondary: #2C3E50;
+  /* Colors - Sage Green & Earth Tones */
+  --color-primary: #7C9082; /* Muted Sage Green */
+  --color-primary-dark: #5C6B60;
+  --color-primary-light: #A3B5A6;
+  --color-secondary: #4A4036; /* Warm Dark Brown/Taupe */
   
-  --color-bg: #F9F6F0; /* Warm off-white */
+  --color-bg: #FDFBF7; /* Very light warm off-white */
   --color-surface: #FFFFFF;
-  --color-text-main: #1C1917;
-  --color-text-muted: #78716C;
+  --color-text-main: #2D2A26;
+  --color-text-muted: #8A817C;
   
   --color-danger: #EF4444;
   --color-success: #10B981;
 
   /* Typography */
   --font-family: 'Inter', sans-serif;
+  --font-heading: 'Playfair Display', serif;
   
   /* Shadows & Glassmorphism */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -96,10 +97,11 @@ img {
 }
 
 .logo {
-  font-size: 1.25rem;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-style: italic;
   font-weight: 700;
   color: var(--color-primary-dark);
-  letter-spacing: -0.025em;
 }
 
 .cart-icon-wrapper {
@@ -139,22 +141,23 @@ img {
 
 /* --- HERO SECTION --- */
 .hero {
-  padding-top: 6rem; /* Space for fixed header */
-  padding-bottom: 3rem;
+  padding-top: 7rem; /* Space for fixed header */
+  padding-bottom: 4rem;
   text-align: center;
-  background: linear-gradient(to bottom, rgba(140, 98, 57, 0.1), transparent);
+  background: linear-gradient(to bottom, rgba(124, 144, 130, 0.1), transparent);
 }
 
 .hero-content {
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
 .hero h2 {
-  font-size: 2rem;
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   color: var(--color-secondary);
   line-height: 1.2;
 }
@@ -162,6 +165,8 @@ img {
 .hero p {
   color: var(--color-text-muted);
   font-size: 1.125rem;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 /* --- MAIN CONTENT & PRODUCT GRID --- */
@@ -172,9 +177,12 @@ img {
 }
 
 .section-title {
-  font-size: 1.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
+  color: var(--color-secondary);
+  text-align: center;
 }
 
 .product-grid {
@@ -327,8 +335,10 @@ img {
 }
 
 .cart-header h2 {
-  font-size: 1.25rem;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
   font-weight: 600;
+  color: var(--color-secondary);
 }
 
 .close-btn {

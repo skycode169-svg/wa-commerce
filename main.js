@@ -6,39 +6,39 @@ import Papa from 'papaparse';
 const GOOGLE_SHEET_ID = 'YOUR_GOOGLE_SHEET_ID';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv`;
 
-// --- DATA ---
+// --- MOCK DATA FALLBACK ---
 const mockProducts = [
   {
     id: 1,
-    name: "Arabica Gayo Premium",
-    price: 85000,
-    unit: "200g",
-    description: "Notes: Fruity, Nutty, Dark Chocolate. Biji kopi single origin dari dataran tinggi Gayo.",
-    image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?q=80&w=600&auto=format&fit=crop"
+    name: 'Mukena Silk Premium (Khaki)',
+    price: 350000,
+    unit: '1 Set',
+    description: "Mukena dengan bahan silk premium yang adem, jatuh, dan tidak menerawang. Sudah termasuk pouch cantik.",
+    image: '/images/mukena_silk_khaki.png'
   },
   {
     id: 2,
-    name: "Robusta Dampit",
-    price: 45000,
-    unit: "250g",
-    description: "Notes: Bold, Earthy, Chocolate. Cocok untuk kopi tubruk atau campuran espresso.",
-    image: "https://images.unsplash.com/photo-1611162458324-aae1eb4129a4?q=80&w=600&auto=format&fit=crop"
+    name: 'Dress Busui Friendly (Sage)',
+    price: 225000,
+    unit: '1 Pcs',
+    description: "Dress panjang elegan warna sage green, menggunakan bahan jatuh. Dilengkapi kancing depan khusus busui.",
+    image: '/images/dress_busui_sage.png'
   },
   {
     id: 3,
-    name: "Kopi Susu Gula Aren (Literan)",
-    price: 75000,
-    unit: "1 Liter",
-    description: "Signature es kopi susu kami dalam kemasan 1 liter, tahan 3 hari di kulkas.",
-    image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600&auto=format&fit=crop"
+    name: 'Skincare Halal Glowing Set',
+    price: 180000,
+    unit: '1 Paket',
+    description: "Rangkaian skincare komplit bersertifikat Halal. Cocok untuk mencerahkan dan aman untuk kulit sensitif.",
+    image: '/images/skincare_halal_set.png'
   },
   {
     id: 4,
-    name: "Cold Brew Konsentrat",
-    price: 90000,
-    unit: "500ml",
-    description: "Konsentrat cold brew 100% Arabica. Tinggal tambah air atau susu.",
-    image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?q=80&w=600&auto=format&fit=crop"
+    name: 'Madu Yaman Royal 500g',
+    price: 120000,
+    unit: '500g',
+    description: "Madu liar murni 100% dari Yaman. Dipercaya ampuh sebagai booster stamina dan imunitas alami keluarga.",
+    image: '/images/madu_yaman_royal.png'
   }
 ];
 
@@ -161,7 +161,7 @@ function updateCartUI() {
         <div class="cart-item-details">
           <h5 class="cart-item-title">${product.name}</h5>
           <div class="cart-item-price">${formatRupiah(product.price)}</div>
-          <input type="text" class="note-input" data-id="${id}" placeholder="Catatan (opsional: less sugar, dll)" value="${note}" />
+          <input type="text" class="note-input" data-id="${id}" placeholder="Request (ex: Ukuran L, Jenis Kulit)" value="${note}" />
           <div class="cart-item-controls">
             <button class="qty-btn minus-btn" data-id="${id}">-</button>
             <span class="qty-val">${qty}</span>
@@ -174,15 +174,29 @@ function updateCartUI() {
 
   }
 
+  // Calculate Infaq (2.5% of total price)
+  const infaqAmount = Math.floor(totalPrice * 0.025);
+  const grandTotal = totalPrice + infaqAmount;
+
   // Update Counters & Totals
   cartBadge.textContent = totalItems;
-  cartTotalPriceEl.textContent = formatRupiah(totalPrice);
+  cartTotalPriceEl.textContent = formatRupiah(grandTotal);
+  
+  // Inject Infaq specific text below total price using a span
+  const existingInfaqSpan = document.getElementById('infaq-info');
+  if(existingInfaqSpan) {
+    existingInfaqSpan.textContent = `(Termasuk Infaq Otomatis 2.5%: ${formatRupiah(infaqAmount)})`;
+  } else {
+    // Attempting to append text below total, the DOM structure of index.html dictates it's next to checkout btn.
+    // For simplicity, we just set the total price element to include this
+    cartTotalPriceEl.innerHTML = `${formatRupiah(grandTotal)} <br><span style="font-size: 0.75rem; font-weight: 400; color: var(--color-text-muted); display: block; margin-top: 0.25rem;">(Termasuk Infaq 2.5%: ${formatRupiah(infaqAmount)} ke Yayasan Kebaikan Bersama)</span>`;
+  }
   
   // Floating Mobile Cart
   if (totalItems > 0) {
     floatingCheckout.classList.add('visible');
     floatingCartCount.textContent = `${totalItems} Item`;
-    floatingTotalPrice.textContent = formatRupiah(totalPrice);
+    floatingTotalPrice.textContent = formatRupiah(grandTotal);
   } else {
     floatingCheckout.classList.remove('visible');
   }
@@ -221,9 +235,11 @@ cartDrawerOverlay.addEventListener('click', toggleDrawer);
 openCartFloatingBtn.addEventListener('click', toggleDrawer);
 
 
-// --- WHATSAPP CHECKOUT ---
-const WHATSAPP_NUMBER = "6281234567890"; // Ganti dengan nomor asli
+// --- CONFIGURATION ---
+const WHATSAPP_NUMBER = '6281234567890'; // Ganti dengan nomor WhatsApp Anda
+const STORE_NAME = 'Azzahra Modest';
 
+// --- WHATSAPP CHECKOUT ---
 checkoutBtn.addEventListener('click', () => {
     const cartIds = Object.keys(cart);
     if(cartIds.length === 0) return;
@@ -231,7 +247,7 @@ checkoutBtn.addEventListener('click', () => {
     let totalItems = 0;
     let totalPrice = 0;
     
-    let text = "Halo admin Kopi Lokal Nusantara, saya ingin memesan:\n\n";
+    let text = `Halo admin ${STORE_NAME}, saya ingin memesan:\n\n`;
 
     cartIds.forEach(idAsStr => {
       const id = parseInt(idAsStr);
@@ -245,8 +261,13 @@ checkoutBtn.addEventListener('click', () => {
       text += `- ${product.name} ${note} (${product.unit}) x ${qty} = ${formatRupiah(product.price * qty)}\n`;
     });
 
-    text += `\n*Total Tagihan: ${formatRupiah(totalPrice)}*\n`;
-    text += `\nMohon informasi ongkos kirim dan total pembayarannya. Terima kasih!`;
+    const infaqAmount = Math.floor(totalPrice * 0.025);
+    const grandTotal = totalPrice + infaqAmount;
+
+    text += `\n*Subtotal:* ${formatRupiah(totalPrice)}\n`;
+    text += `*Infaq (2.5%):* ${formatRupiah(infaqAmount)}\n`;
+    text += `*Total Tagihan: ${formatRupiah(grandTotal)}*\n\n`;
+    text += `Mohon info ongkir dan nomor rekening ya min. Terima kasih! 🙏`;
 
     const encodedText = encodeURIComponent(text);
     const waUrl = `https://api.whatsapp.com/send/?phone=${WHATSAPP_NUMBER}&text=${encodedText}&type=phone_number&app_absent=0`;
